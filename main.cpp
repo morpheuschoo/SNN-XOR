@@ -4,6 +4,7 @@
 #include <cmath>
 #include <chrono>
 #include <random>
+#include <iomanip>
 
 class SNN {
 private:
@@ -15,10 +16,10 @@ private:
     static constexpr double lr = 5;
 
     std::array<double, NUMHIDDENNODES> hiddenNodes;
-    std::array<double, NUMOUTPUTNODES>  outputNodes;
+    std::array<double, NUMOUTPUTNODES> outputNodes;
 
     std::array<double, NUMHIDDENNODES> ActivationHiddenNodes;
-    std::array<double, NUMOUTPUTNODES>  ActivationOutputNodes;
+    std::array<double, NUMOUTPUTNODES> ActivationOutputNodes;
 
     std::array<std::array<double, NUMHIDDENNODES>, NUMINPUTNODES>  hiddenWeights;
     std::array<std::array<double, NUMOUTPUTNODES>, NUMHIDDENNODES> outputWeights;
@@ -134,10 +135,12 @@ void SNN::Train(size_t numEpochs) {
 
                 ActivationOutputNodes[outputNo] = Sigmoid(outputNodes[outputNo]);
             }
-        
+
             std::cout << "INPUT: "           << trainInput[setNo][0]     << " " << trainInput[setNo][1] << " " \
                       << "EXPECTED OUTPUT: " << trainOutput[setNo][0]    << " " \
-                      << "ACTUAL OUTPUT: "   << ActivationOutputNodes[0] << std::endl;
+                      << "ACTUAL OUTPUT: "   << std::fixed << std::setprecision(5) << ActivationOutputNodes[0] << " " \
+                      << "COST: " << std::fixed << std::setprecision(10) << Cost(ActivationOutputNodes[0], trainOutput[setNo][0]) \
+                      << std::noshowpoint << std::setprecision(0) << std::endl;
 
             // backpropagation
 
