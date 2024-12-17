@@ -13,7 +13,7 @@ private:
     static constexpr size_t NUMOUTPUTNODES  = 1;
     static constexpr size_t NUMTRAININGSETS = 4;
 
-    static constexpr double lr = 5;
+    static constexpr double lr = 0.7;
 
     std::array<double, NUMHIDDENNODES> hiddenNodes;
     std::array<double, NUMOUTPUTNODES> outputNodes;
@@ -78,7 +78,7 @@ double SNN::DCost(double actualOutput, double expectedOutput) {
 
 void SNN::InitWeightsAndBiases() {
     std::default_random_engine generator(std::chrono::system_clock::now().time_since_epoch().count());
-    std::uniform_real_distribution<double> distribution(0, 1);
+    std::uniform_real_distribution<double> distribution(-1, 1);
     
     for(auto &i : hiddenWeights) {
         for(auto &v : i) {
@@ -136,12 +136,6 @@ void SNN::Train(size_t numEpochs) {
                 ActivationOutputNodes[outputNo] = Sigmoid(outputNodes[outputNo]);
             }
 
-            std::cout << "INPUT: "           << trainInput[setNo][0]     << " " << trainInput[setNo][1] << " " \
-                      << "EXPECTED OUTPUT: " << trainOutput[setNo][0]    << " " \
-                      << "ACTUAL OUTPUT: "   << std::fixed << std::setprecision(5) << ActivationOutputNodes[0] << " " \
-                      << "COST: " << std::fixed << std::setprecision(10) << Cost(ActivationOutputNodes[0], trainOutput[setNo][0]) \
-                      << std::noshowpoint << std::setprecision(0) << std::endl;
-
             // backpropagation
 
             std::array<double, NUMOUTPUTNODES> deltaOutput;
@@ -180,6 +174,12 @@ void SNN::Train(size_t numEpochs) {
                     hiddenWeights[inputNo][hiddenNo] -= deltaHidden[hiddenNo] * trainInput[setNo][inputNo] * lr;
                 }
             }
+
+            std::cout << "INPUT: "           << trainInput[setNo][0]     << " " << trainInput[setNo][1] << " " \
+                      << "EXPECTED OUTPUT: " << trainOutput[setNo][0]    << " " \
+                      << "ACTUAL OUTPUT: "   << std::fixed << std::setprecision(5) << ActivationOutputNodes[0] << " " \
+                      << "COST: " << std::fixed << std::setprecision(10) << Cost(ActivationOutputNodes[0], trainOutput[setNo][0]) \
+                      << std::noshowpoint << std::setprecision(0) << std::endl;
         }
     }
 }
